@@ -636,6 +636,12 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 8,
   },
+  inputHelperText: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
+    fontStyle: 'italic',
+  },
   textInput: {
     borderWidth: 1,
     borderColor: '#ddd',
