@@ -233,26 +233,30 @@ async def get_calculation_history(limit: int = 10):
 @api_router.get("/tax-info")
 async def get_tax_info():
     return {
-        "irps_brackets": [
-            {"faixa": "0 - 20,249.99 MTn", "taxa": "0%", "descricao": "Isento - Primeira faixa"},
-            {"faixa": "20,250 - 20,749.99 MTn", "taxa": "0%", "descricao": "Isento - Segunda faixa"},
-            {"faixa": "20,750 - 20,999.99 MTn", "taxa": "10%", "descricao": "Primeira faixa tributável"},
-            {"faixa": "21,000 - 21,249.99 MTn", "taxa": "10%", "descricao": "Segunda faixa 10%"},
-            {"faixa": "21,250 - 21,749.99 MTn", "taxa": "10%", "descricao": "Terceira faixa 10%"},
-            {"faixa": "21,750 - 22,249.99 MTn", "taxa": "10%", "descricao": "Quarta faixa 10%"},
-            {"faixa": "22,250 - 32,749.99 MTn", "taxa": "15%", "descricao": "Faixa de 15%"},
-            {"faixa": "32,750 - 60,749.99 MTn", "taxa": "20%", "descricao": "Faixa de 20%"},
-            {"faixa": "60,750 - 144,749.99 MTn", "taxa": "25%", "descricao": "Faixa de 25%"},
-            {"faixa": "Acima de 144,750 MTn", "taxa": "32%", "descricao": "Faixa máxima de 32%"}
+        "irps_matrix": [
+            {"faixa": "0 - 20,249.99 MTn", "0_dep": "0 MTn", "1_dep": "0 MTn", "2_dep": "0 MTn", "3_dep": "0 MTn", "4_dep": "0 MTn"},
+            {"faixa": "20,250 - 20,749.99 MTn", "0_dep": "0 MTn", "1_dep": "0 MTn", "2_dep": "0 MTn", "3_dep": "0 MTn", "4_dep": "0 MTn"},
+            {"faixa": "20,750 - 20,999.99 MTn", "0_dep": "50 MTn", "1_dep": "0 MTn", "2_dep": "0 MTn", "3_dep": "0 MTn", "4_dep": "0 MTn"},
+            {"faixa": "21,000 - 21,249.99 MTn", "0_dep": "75 MTn", "1_dep": "25 MTn", "2_dep": "0 MTn", "3_dep": "0 MTn", "4_dep": "0 MTn"},
+            {"faixa": "21,250 - 21,749.99 MTn", "0_dep": "100 MTn", "1_dep": "50 MTn", "2_dep": "25 MTn", "3_dep": "0 MTn", "4_dep": "0 MTn"},
+            {"faixa": "21,750 - 22,249.99 MTn", "0_dep": "150 MTn", "1_dep": "100 MTn", "2_dep": "75 MTn", "3_dep": "50 MTn", "4_dep": "0 MTn"},
+            {"faixa": "22,250 - 32,749.99 MTn", "0_dep": "200 MTn", "1_dep": "150 MTn", "2_dep": "125 MTn", "3_dep": "100 MTn", "4_dep": "50 MTn"},
+            {"faixa": "32,750 - 60,749.99 MTn", "0_dep": "1,775 MTn", "1_dep": "1,725 MTn", "2_dep": "1,700 MTn", "3_dep": "1,675 MTn", "4_dep": "1,625 MTn"},
+            {"faixa": "60,750 - 144,749.99 MTn", "0_dep": "7,375 MTn", "1_dep": "7,325 MTn", "2_dep": "7,300 MTn", "3_dep": "7,275 MTn", "4_dep": "7,225 MTn"},
+            {"faixa": "Acima de 144,750 MTn", "0_dep": "28,375 MTn", "1_dep": "28,325 MTn", "2_dep": "28,300 MTn", "3_dep": "28,275 MTn", "4_dep": "28,225 MTn"}
         ],
         "inss": {
             "empregado": "3%",
             "empregador": "4%",
             "total": "7%"
         },
+        "dependentes_info": {
+            "descricao": "Valores de IRPS variam conforme número de dependentes (0-4)",
+            "nota": "Cônjuge e filhos menores/estudantes até 25 anos"
+        },
         "moeda": "Metical Moçambicano (MTn)",
         "ano": "2025",
-        "fonte": "Matriz Oficial IRPS - Governo de Moçambique"
+        "fonte": "Matriz Oficial IRPS - Autoridade Tributária de Moçambique"
     }
 
 # Include the router in the main app
