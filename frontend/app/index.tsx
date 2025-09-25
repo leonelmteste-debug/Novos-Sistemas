@@ -38,6 +38,7 @@ export default function SalaryCalculator() {
   const [medicalAid, setMedicalAid] = useState('');
   const [loans, setLoans] = useState('');
   const [otherDiscounts, setOtherDiscounts] = useState('');
+  const [dependents, setDependents] = useState('');
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState<'monthly' | 'annual'>('monthly');
