@@ -89,6 +89,7 @@ export default function SalaryCalculator() {
     setMedicalAid('');
     setLoans('');
     setOtherDiscounts('');
+    setDependents('');
     setResult(null);
   };
 
