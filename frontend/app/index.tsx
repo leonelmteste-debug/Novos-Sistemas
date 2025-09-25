@@ -58,6 +58,7 @@ export default function SalaryCalculator() {
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [viewMode, setViewMode] = useState<'monthly' | 'annual'>('monthly');
+  const [showCalculationDetails, setShowCalculationDetails] = useState(false);
 
   const calculateSalary = async () => {
     if (!salary) {
