@@ -59,24 +59,20 @@ class CalculationResult(BaseModel):
 class CalculationHistory(BaseModel):
     calculations: List[CalculationResult]
 
-# IRPS Matrix from Official Moçambique Tax Authority (2025)
-# Values are exact IRPS amounts to retain based on salary range and number of dependents
-IRPS_MATRIX = {
-    # (min_salary, max_salary): {dependents: irps_amount}
-    (0, 20249.99): {0: 0, 1: 0, 2: 0, 3: 0, 4: 0},
-    (20250, 20749.99): {0: 0, 1: 0, 2: 0, 3: 0, 4: 0},
-    (20750, 20999.99): {0: 50, 1: 0, 2: 0, 3: 0, 4: 0},
-    (21000, 21249.99): {0: 75, 1: 25, 2: 0, 3: 0, 4: 0},
-    (21250, 21749.99): {0: 100, 1: 50, 2: 25, 3: 0, 4: 0},
-    (21750, 22249.99): {0: 150, 1: 100, 2: 75, 3: 50, 4: 0},
-    (22250, 32749.99): {0: 200, 1: 150, 2: 125, 3: 100, 4: 50},
-    (32750, 60749.99): {0: 1775, 1: 1725, 2: 1700, 3: 1675, 4: 1625},
-    (60750, 144749.99): {0: 7375, 1: 7325, 2: 7300, 3: 7275, 4: 7225},
-    (144750, float('inf')): {0: 28375, 1: 28325, 2: 28300, 3: 28275, 4: 28225},
-}
-
-# Tax rates for each bracket (for informational purposes)
-IRPS_RATES = [0, 0.10, 0.10, 0.10, 0.10, 0.10, 0.15, 0.20, 0.25, 0.32]
+# IRPS Tax Calculation Structure (Official Moçambique Tax Authority 2025)
+# Each entry: [lower_limit, coefficient, base_values_by_dependents[0,1,2,3,4]]
+IRPS_TAX_TABLE = [
+    [0, 0, [0, 0, 0, 0, 0]],                          # 0 - 20,249.99
+    [20250, 0, [0, 0, 0, 0, 0]],                      # 20,250 - 20,749.99
+    [20750, 0.10, [0, 0, 0, 0, 0]],                   # 20,750 - 20,999.99
+    [21000, 0.10, [50, 0, 0, 0, 0]],                  # 21,000 - 21,249.99
+    [21250, 0.10, [75, 25, 0, 0, 0]],                 # 21,250 - 21,749.99
+    [21750, 0.10, [100, 50, 25, 0, 0]],               # 21,750 - 22,249.99
+    [22250, 0.15, [150, 100, 75, 50, 0]],             # 22,250 - 32,749.99
+    [32750, 0.20, [1775, 1725, 1700, 1675, 1625]],   # 32,750 - 60,749.99
+    [60750, 0.25, [7375, 7325, 7300, 7275, 7225]],   # 60,750 - 144,749.99
+    [144750, 0.32, [28375, 28325, 28300, 28275, 28225]]  # Above 144,750
+]
 
 # INSS rates
 INSS_EMPLOYEE_RATE = 0.03  # 3%
