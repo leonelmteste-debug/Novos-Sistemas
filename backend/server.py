@@ -258,7 +258,8 @@ async def calculate_salary(input_data: CalculationInput):
             dependents_deduction=result["dependents_deduction"],
             monthly_breakdown=monthly_breakdown,
             annual_breakdown=annual_breakdown,
-            calculation_type=input_data.calculation_type
+            calculation_type=input_data.calculation_type,
+            irps_calculation_details=result.get("irps_calculation_details", {})
         )
         
         # Save to database
