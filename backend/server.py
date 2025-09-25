@@ -78,8 +78,8 @@ IRPS_BRACKETS = [
 INSS_EMPLOYEE_RATE = 0.03  # 3%
 INSS_EMPLOYER_RATE = 0.04  # 4%
 
-# Dependents deduction (based on research - approximately 5,000 MTn per dependent per month)
-DEPENDENTS_DEDUCTION_PER_MONTH = 5000  # MTn per dependent per month
+# Dependents deduction (official value from AT Moçambique for 2025)
+DEPENDENTS_DEDUCTION_PER_MONTH = 200  # MTn per dependent per month (official value)
 
 def calculate_irps_tax(monthly_salary: float, dependents: int = 0) -> tuple:
     """Calculate IRPS tax based on progressive brackets with dependents deduction"""
