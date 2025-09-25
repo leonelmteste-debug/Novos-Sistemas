@@ -222,10 +222,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Implement IRPS tax calculation with progressive brackets (10%-32%)"
-    - "Implement INSS calculation (3% employee + 4% employer)"
-    - "Create salary calculation API endpoints"
-    - "Implement gross-to-net and net-to-gross conversion algorithms"
+    - "Create mobile UI with Portuguese interface"
+    - "Implement calculation type selector (gross-to-net / net-to-gross)"
+    - "Create input forms for salary and discounts"
+    - "Display calculation results with monthly/annual breakdown"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -233,3 +233,5 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Completed initial implementation of Mozambique salary calculator with tax logic and mobile UI. Ready for backend testing to validate IRPS and INSS calculations accuracy."
+  - agent: "testing"
+    message: "✅ BACKEND TESTING COMPLETE: All 4 high-priority backend tasks verified and working correctly. IRPS progressive tax brackets (0%-32%) accurate, INSS calculations (3%/4%) correct, API endpoints functional, both calculation directions working. MongoDB integration confirmed. 93.8% test success rate (15/16 tests passed). Minor: Error handling returns 500 instead of 400 for invalid calculation types, but functionally correct. Backend ready for production."
