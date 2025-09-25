@@ -198,6 +198,21 @@ export default function SalaryCalculator() {
         />
       </View>
 
+      <View style={styles.inputGroup}>
+        <Text style={styles.inputLabel}>Número de Dependentes</Text>
+        <TextInput
+          style={styles.textInput}
+          value={dependents}
+          onChangeText={setDependents}
+          placeholder="Ex: 2"
+          keyboardType="numeric"
+          placeholderTextColor="#999"
+        />
+        <Text style={styles.inputHelperText}>
+          Dedução de 5.000 MTn por dependente (cônjuge, filhos menores, etc.)
+        </Text>
+      </View>
+
       <View style={styles.buttonRow}>
         <TouchableOpacity style={styles.clearButton} onPress={clearForm}>
           <MaterialIcons name="clear" size={20} color="#666" />
