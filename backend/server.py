@@ -206,6 +206,8 @@ async def calculate_salary(input_data: CalculationInput):
             loans=result["loans"],
             other_discounts=result["other_discounts"],
             total_discounts=result["total_discounts"],
+            dependents=result["dependents"],
+            dependents_deduction=result["dependents_deduction"],
             monthly_breakdown=monthly_breakdown,
             annual_breakdown=annual_breakdown,
             calculation_type=input_data.calculation_type
