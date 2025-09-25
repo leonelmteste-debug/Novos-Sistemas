@@ -83,28 +83,28 @@ INSS_EMPLOYEE_RATE = 0.03  # 3%
 INSS_EMPLOYER_RATE = 0.04  # 4%
 
 def calculate_irps_tax(monthly_salary: float, dependents: int = 0) -> tuple:
-    """Calculate IRPS tax based on progressive brackets with dependents deduction"""
-    # Calculate dependents deduction
-    dependents_deduction = dependents * DEPENDENTS_DEDUCTION_PER_MONTH
+    """Calculate IRPS tax based on official matrix from Moçambique Tax Authority"""
+    # Cap dependents at 4 (matrix only goes up to 4 dependents)
+    dependents_capped = min(dependents, 4)
     
-    # Apply deduction to salary (taxable income)
-    taxable_salary = max(0, monthly_salary - dependents_deduction)
+    # Find the appropriate salary bracket
+    irps_amount = 0
+    for (min_sal, max_sal), dependent_rates in IRPS_MATRIX.items():
+        if min_sal <= monthly_salary <= max_sal:
+            irps_amount = dependent_rates[dependents_capped]
+            break
     
-    tax = 0.0
+    # Calculate the effective dependents deduction (for informational purposes)
+    # This is the difference between 0 dependents and actual dependents
+    base_irps = 0
+    for (min_sal, max_sal), dependent_rates in IRPS_MATRIX.items():
+        if min_sal <= monthly_salary <= max_sal:
+            base_irps = dependent_rates[0]
+            break
     
-    for bracket in IRPS_BRACKETS:
-        if bracket.max_amount is None:
-            # Highest bracket
-            if taxable_salary > bracket.min_amount:
-                taxable_amount = taxable_salary - bracket.min_amount
-                tax += taxable_amount * bracket.rate
-        else:
-            # Regular bracket
-            if taxable_salary > bracket.min_amount:
-                taxable_amount = min(taxable_salary, bracket.max_amount) - bracket.min_amount
-                tax += taxable_amount * bracket.rate
+    dependents_deduction = base_irps - irps_amount
     
-    return tax, dependents_deduction
+    return irps_amount, dependents_deduction
 
 def calculate_inss(monthly_salary: float) -> tuple:
     """Calculate INSS contributions for employee and employer"""
