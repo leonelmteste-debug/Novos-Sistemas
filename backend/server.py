@@ -49,6 +49,8 @@ class CalculationResult(BaseModel):
     loans: float
     other_discounts: float
     total_discounts: float
+    dependents: int
+    dependents_deduction: float
     monthly_breakdown: dict
     annual_breakdown: dict
     calculation_type: str
