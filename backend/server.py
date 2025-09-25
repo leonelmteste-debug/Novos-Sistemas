@@ -167,14 +167,16 @@ async def calculate_salary(input_data: CalculationInput):
                 input_data.salary,
                 input_data.medical_aid,
                 input_data.loans,
-                input_data.other_discounts
+                input_data.other_discounts,
+                input_data.dependents
             )
         elif input_data.calculation_type == "net_to_gross":
             result = calculate_gross_from_net(
                 input_data.salary,
                 input_data.medical_aid,
                 input_data.loans,
-                input_data.other_discounts
+                input_data.other_discounts,
+                input_data.dependents
             )
         else:
             raise HTTPException(status_code=400, detail="Tipo de cálculo inválido")
