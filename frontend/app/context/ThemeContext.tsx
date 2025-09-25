@@ -67,7 +67,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const toggleTheme = async () => {
     const newTheme = !isDark;
     setIsDark(newTheme);
-    await AsyncStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    try {
+      await AsyncStorage.setItem('theme', newTheme ? 'dark' : 'light');
+    } catch (error) {
+      console.error('Error saving theme:', error);
+    }
   };
 
   useEffect(() => {
@@ -100,3 +104,6 @@ export const useTheme = () => {
   }
   return context;
 };
+
+// Default export for Expo Router compatibility
+export default ThemeProvider;
