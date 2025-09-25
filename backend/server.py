@@ -133,14 +133,14 @@ def calculate_net_from_gross(gross_salary: float, medical_aid: float = 0, loans:
         "dependents_deduction": dependents_deduction
     }
 
-def calculate_gross_from_net(net_salary: float, medical_aid: float = 0, loans: float = 0, other_discounts: float = 0) -> dict:
+def calculate_gross_from_net(net_salary: float, medical_aid: float = 0, loans: float = 0, other_discounts: float = 0, dependents: int = 0) -> dict:
     """Calculate gross salary from net salary using iterative approach"""
     # Start with an initial guess
     gross_estimate = net_salary * 1.5
     
     # Iteratively refine the gross salary estimate
     for _ in range(100):  # Maximum iterations to prevent infinite loop
-        result = calculate_net_from_gross(gross_estimate, medical_aid, loans, other_discounts)
+        result = calculate_net_from_gross(gross_estimate, medical_aid, loans, other_discounts, dependents)
         
         if abs(result["net_salary"] - net_salary) < 0.01:  # Precision threshold
             break
@@ -152,7 +152,7 @@ def calculate_gross_from_net(net_salary: float, medical_aid: float = 0, loans: f
         if gross_estimate < 0:
             gross_estimate = net_salary
     
-    return calculate_net_from_gross(gross_estimate, medical_aid, loans, other_discounts)
+    return calculate_net_from_gross(gross_estimate, medical_aid, loans, other_discounts, dependents)
 
 # API Routes
 @api_router.get("/")
