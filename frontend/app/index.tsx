@@ -97,6 +97,162 @@ export default function SalaryCalculator() {
     return `${value.toLocaleString('pt-MZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} MTn`;
   };
 
+  const generatePDFHTML = (result: CalculationResult) => {
+    const monthly = result.monthly_breakdown;
+    const currentDate = new Date().toLocaleDateString('pt-MZ', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    return `
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Cálculo Salarial - Moçambique</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+            .header { text-align: center; color: #2E7D32; margin-bottom: 30px; border-bottom: 2px solid #2E7D32; padding-bottom: 20px; }
+            .section { margin-bottom: 25px; }
+            .row { display: flex; justify-content: space-between; margin-bottom: 8px; padding: 5px 0; }
+            .label { font-weight: bold; color: #333; }
+            .value { color: #333; text-align: right; }
+            .total { background-color: #f0f0f0; padding: 12px; border-radius: 5px; font-weight: bold; }
+            .deduction { color: #d32f2f; }
+            .net-salary { color: #2E7D32; font-size: 1.2em; }
+            .gross-salary { color: #f57c00; font-size: 1.2em; }
+            .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee; padding-top: 15px; }
+            .dependents-info { background-color: #e8f5e8; padding: 10px; border-radius: 5px; margin: 10px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Calculadora Salarial de Moçambique</h1>
+            <p>Cálculo baseado na matriz oficial IRPS e INSS</p>
+            <p><strong>Data do Cálculo:</strong> ${currentDate}</p>
+          </div>
+          
+          <div class="section">
+            <h2>Resumo do Cálculo</h2>
+            <div class="row">
+              <span class="label">Tipo de Cálculo:</span>
+              <span class="value">${result.calculation_type === 'gross_to_net' ? 'Salário Bruto → Líquido' : 'Salário Líquido → Bruto'}</span>
+            </div>
+            <div class="row">
+              <span class="label">Salário Bruto:</span>
+              <span class="value gross-salary">${formatCurrency(monthly.salario_bruto)}</span>
+            </div>
+            <div class="row">
+              <span class="label">Salário Líquido:</span>
+              <span class="value net-salary">${formatCurrency(monthly.salario_liquido)}</span>
+            </div>
+            ${result.dependents > 0 ? `
+              <div class="dependents-info">
+                <div class="row">
+                  <span class="label">Número de Dependentes:</span>
+                  <span class="value">${result.dependents}</span>
+                </div>
+                <div class="row">
+                  <span class="label">Dedução por Dependentes:</span>
+                  <span class="value">${formatCurrency(result.dependents_deduction)}</span>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="section">
+            <h2>Detalhamento dos Descontos (Mensal)</h2>
+            <div class="row">
+              <span class="label">IRPS (Imposto sobre Rendimento):</span>
+              <span class="value deduction">${formatCurrency(monthly.irps)}</span>
+            </div>
+            <div class="row">
+              <span class="label">INSS Empregado (3%):</span>
+              <span class="value deduction">${formatCurrency(monthly.inss_empregado)}</span>
+            </div>
+            <div class="row">
+              <span class="label">INSS Empregador (4%):</span>
+              <span class="value">${formatCurrency(monthly.inss_empregador)}</span>
+            </div>
+            ${monthly.seguro_medico > 0 ? `
+              <div class="row">
+                <span class="label">Seguro Médico:</span>
+                <span class="value deduction">${formatCurrency(monthly.seguro_medico)}</span>
+              </div>
+            ` : ''}
+            ${monthly.emprestimos > 0 ? `
+              <div class="row">
+                <span class="label">Empréstimos:</span>
+                <span class="value deduction">${formatCurrency(monthly.emprestimos)}</span>
+              </div>
+            ` : ''}
+            ${monthly.outros_descontos > 0 ? `
+              <div class="row">
+                <span class="label">Outros Descontos:</span>
+                <span class="value deduction">${formatCurrency(monthly.outros_descontos)}</span>
+              </div>
+            ` : ''}
+            <div class="row total">
+              <span class="label">Total de Descontos:</span>
+              <span class="value deduction">${formatCurrency(monthly.total_descontos)}</span>
+            </div>
+          </div>
+
+          <div class="section">
+            <h2>Valores Anuais</h2>
+            <div class="row">
+              <span class="label">Salário Bruto Anual:</span>
+              <span class="value gross-salary">${formatCurrency(result.annual_breakdown.salario_bruto)}</span>
+            </div>
+            <div class="row">
+              <span class="label">Salário Líquido Anual:</span>
+              <span class="value net-salary">${formatCurrency(result.annual_breakdown.salario_liquido)}</span>
+            </div>
+            <div class="row">
+              <span class="label">Total de Descontos Anual:</span>
+              <span class="value deduction">${formatCurrency(result.annual_breakdown.total_descontos)}</span>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p><strong>Calculadora Salarial de Moçambique</strong></p>
+            <p>Cálculos baseados na matriz oficial IRPS e tabelas INSS de 2025</p>
+            <p>Este documento foi gerado automaticamente e serve apenas para fins informativos</p>
+          </div>
+        </body>
+      </html>
+    `;
+  };
+
+  const downloadPDF = async () => {
+    if (!result) {
+      Alert.alert('Erro', 'Nenhum resultado disponível para download');
+      return;
+    }
+
+    try {
+      const html = generatePDFHTML(result);
+      const { uri } = await Print.printToFileAsync({ 
+        html,
+        base64: false 
+      });
+      
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri, {
+          mimeType: 'application/pdf',
+          dialogTitle: 'Compartilhar Cálculo Salarial',
+        });
+      } else {
+        Alert.alert('Sucesso', 'PDF gerado com sucesso! Verifique os seus downloads.');
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Falha ao gerar PDF. Tente novamente.');
+      console.error('PDF generation error:', error);
+    }
+  };
+
   const renderCalculationTypeSelector = () => (
     <View style={styles.typeSelector}>
       <Text style={styles.sectionTitle}>Tipo de Cálculo</Text>
