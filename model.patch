@@ -1,100 +1,197 @@
-diff --git a/test_result.md b/test_result.md
-index 37b2141..0cf311b 100644
---- a/test_result.md
-+++ b/test_result.md
-@@ -107,51 +107,63 @@ user_problem_statement: "Create an android app that may calculate Net Salary ou
- backend:
-   - task: "Implement IRPS tax calculation with progressive brackets (10%-32%)"
-     implemented: true
--    working: "unknown"
-+    working: true
-     file: "server.py"
-     stuck_count: 0
-     priority: "high"
--    needs_retesting: true
-+    needs_retesting: false
-     status_history:
-       - working: "unknown"
-         agent: "main"
-         comment: "Implemented progressive tax calculation with brackets based on 2025 Mozambique tax rates. Need to test calculations."
-+      - working: true
-+        agent: "testing"
-+        comment: "✅ VERIFIED: IRPS tax calculation working correctly. Tested all 6 brackets (0%, 10%, 15%, 20%, 25%, 32%). Progressive taxation applied accurately across salary ranges from 15K to 300K MTn. Tax-free threshold at 18,750 MTn confirmed."
+diff --git a/backend/server.py b/backend/server.py
+index 78da4a0..9311c2b 100644
+--- a/backend/server.py
++++ b/backend/server.py
+@@ -59,51 +59,52 @@ class CalculationResult(BaseModel):
+ class CalculationHistory(BaseModel):
+     calculations: List[CalculationResult]
  
-   - task: "Implement INSS calculation (3% employee + 4% employer)"
-     implemented: true
--    working: "unknown"
-+    working: true
-     file: "server.py"
-     stuck_count: 0
-     priority: "high"
--    needs_retesting: true
-+    needs_retesting: false
-     status_history:
-       - working: "unknown"
-         agent: "main"
-         comment: "Implemented INSS calculation with official rates. Need to test calculations."
-+      - working: true
-+        agent: "testing"
-+        comment: "✅ VERIFIED: INSS calculation working correctly. Employee contribution: 3%, Employer contribution: 4%. Tested across multiple salary ranges and calculations are accurate."
+-# IRPS tax brackets for 2025 (based on official matrix provided)
+-# Values are monthly amounts in MTn
+-IRPS_BRACKETS = [
+-    TaxBracket(min_amount=0, max_amount=20249.99, rate=0.0),        # 0% até 20,249.99 MTn
+-    TaxBracket(min_amount=20250, max_amount=20749.99, rate=0.0),    # 0% de 20,250 a 20,749.99 MTn
+-    TaxBracket(min_amount=20750, max_amount=20999.99, rate=0.10),   # 10% de 20,750 a 20,999.99 MTn
+-    TaxBracket(min_amount=21000, max_amount=21249.99, rate=0.10),   # 10% de 21,000 a 21,249.99 MTn
+-    TaxBracket(min_amount=21250, max_amount=21749.99, rate=0.10),   # 10% de 21,250 a 21,749.99 MTn
+-    TaxBracket(min_amount=21750, max_amount=22249.99, rate=0.10),   # 10% de 21,750 a 22,249.99 MTn
+-    TaxBracket(min_amount=22250, max_amount=32749.99, rate=0.15),   # 15% de 22,250 a 32,749.99 MTn
+-    TaxBracket(min_amount=32750, max_amount=60749.99, rate=0.20),   # 20% de 32,750 a 60,749.99 MTn
+-    TaxBracket(min_amount=60750, max_amount=144749.99, rate=0.25),  # 25% de 60,750 a 144,749.99 MTn
+-    TaxBracket(min_amount=144750, max_amount=None, rate=0.32),      # 32% acima de 144,750 MTn
+-]
++# IRPS Matrix from Official Moçambique Tax Authority (2025)
++# Values are exact IRPS amounts to retain based on salary range and number of dependents
++IRPS_MATRIX = {
++    # (min_salary, max_salary): {dependents: irps_amount}
++    (0, 20249.99): {0: 0, 1: 0, 2: 0, 3: 0, 4: 0},
++    (20250, 20749.99): {0: 0, 1: 0, 2: 0, 3: 0, 4: 0},
++    (20750, 20999.99): {0: 50, 1: 0, 2: 0, 3: 0, 4: 0},
++    (21000, 21249.99): {0: 75, 1: 25, 2: 0, 3: 0, 4: 0},
++    (21250, 21749.99): {0: 100, 1: 50, 2: 25, 3: 0, 4: 0},
++    (21750, 22249.99): {0: 150, 1: 100, 2: 75, 3: 50, 4: 0},
++    (22250, 32749.99): {0: 200, 1: 150, 2: 125, 3: 100, 4: 50},
++    (32750, 60749.99): {0: 1775, 1: 1725, 2: 1700, 3: 1675, 4: 1625},
++    (60750, 144749.99): {0: 7375, 1: 7325, 2: 7300, 3: 7275, 4: 7225},
++    (144750, float('inf')): {0: 28375, 1: 28325, 2: 28300, 3: 28275, 4: 28225},
++}
++
++# Tax rates for each bracket (for informational purposes)
++IRPS_RATES = [0, 0.10, 0.10, 0.10, 0.10, 0.10, 0.15, 0.20, 0.25, 0.32]
  
-   - task: "Create salary calculation API endpoints"
-     implemented: true
--    working: "unknown"
-+    working: true
-     file: "server.py"
-     stuck_count: 0
-     priority: "high"
--    needs_retesting: true
-+    needs_retesting: false
-     status_history:
-       - working: "unknown"
-         agent: "main"
-         comment: "Created POST /api/calculate-salary endpoint with gross-to-net and net-to-gross calculations. Need to test API calls."
-+      - working: true
-+        agent: "testing"
-+        comment: "✅ VERIFIED: All API endpoints working. GET /api/ (health check), POST /api/calculate-salary (main calculation), GET /api/calculation-history (data retrieval), GET /api/tax-info (tax brackets info). MongoDB integration confirmed - calculations saved and retrieved successfully."
+ # INSS rates
+ INSS_EMPLOYEE_RATE = 0.03  # 3%
+ INSS_EMPLOYER_RATE = 0.04  # 4%
  
-   - task: "Implement gross-to-net and net-to-gross conversion algorithms"
-     implemented: true
--    working: "unknown"
-+    working: true
-     file: "server.py"
-     stuck_count: 0
-     priority: "high"
--    needs_retesting: true
-+    needs_retesting: false
-     status_history:
-       - working: "unknown"
-         agent: "main"
-         comment: "Implemented both calculation directions with iterative approach for net-to-gross. Need to verify accuracy."
-+      - working: true
-+        agent: "testing"
-+        comment: "✅ VERIFIED: Both calculation directions working accurately. Gross-to-net: Direct calculation with all deductions. Net-to-gross: Iterative approach converges correctly within 100 MTn tolerance. Tested with realistic Mozambican salaries (35K-200K MTn range)."
+-# Dependents deduction (official value from AT Moçambique for 2025)
+-DEPENDENTS_DEDUCTION_PER_MONTH = 200  # MTn per dependent per month (official value)
+-
+ def calculate_irps_tax(monthly_salary: float, dependents: int = 0) -> tuple:
+-    """Calculate IRPS tax based on progressive brackets with dependents deduction"""
+-    # Calculate dependents deduction
+-    dependents_deduction = dependents * DEPENDENTS_DEDUCTION_PER_MONTH
++    """Calculate IRPS tax based on official matrix from Moçambique Tax Authority"""
++    # Cap dependents at 4 (matrix only goes up to 4 dependents)
++    dependents_capped = min(dependents, 4)
+     
+-    # Apply deduction to salary (taxable income)
+-    taxable_salary = max(0, monthly_salary - dependents_deduction)
++    # Find the appropriate salary bracket
++    irps_amount = 0
++    for (min_sal, max_sal), dependent_rates in IRPS_MATRIX.items():
++        if min_sal <= monthly_salary <= max_sal:
++            irps_amount = dependent_rates[dependents_capped]
++            break
+     
+-    tax = 0.0
++    # Calculate the effective dependents deduction (for informational purposes)
++    # This is the difference between 0 dependents and actual dependents
++    base_irps = 0
++    for (min_sal, max_sal), dependent_rates in IRPS_MATRIX.items():
++        if min_sal <= monthly_salary <= max_sal:
++            base_irps = dependent_rates[0]
++            break
+     
+-    for bracket in IRPS_BRACKETS:
+-        if bracket.max_amount is None:
+-            # Highest bracket
+-            if taxable_salary > bracket.min_amount:
+-                taxable_amount = taxable_salary - bracket.min_amount
+-                tax += taxable_amount * bracket.rate
+-        else:
+-            # Regular bracket
+-            if taxable_salary > bracket.min_amount:
+-                taxable_amount = min(taxable_salary, bracket.max_amount) - bracket.min_amount
+-                tax += taxable_amount * bracket.rate
++    dependents_deduction = base_irps - irps_amount
+     
+-    return tax, dependents_deduction
++    return irps_amount, dependents_deduction
  
- frontend:
-   - task: "Create mobile UI with Portuguese interface"
-@@ -210,14 +222,16 @@ metadata:
- 
- test_plan:
-   current_focus:
--    - "Implement IRPS tax calculation with progressive brackets (10%-32%)"
--    - "Implement INSS calculation (3% employee + 4% employer)"
--    - "Create salary calculation API endpoints"
--    - "Implement gross-to-net and net-to-gross conversion algorithms"
-+    - "Create mobile UI with Portuguese interface"
-+    - "Implement calculation type selector (gross-to-net / net-to-gross)"
-+    - "Create input forms for salary and discounts"
-+    - "Display calculation results with monthly/annual breakdown"
-   stuck_tasks: []
-   test_all: false
-   test_priority: "high_first"
- 
- agent_communication:
-   - agent: "main"
--    message: "Completed initial implementation of Mozambique salary calculator with tax logic and mobile UI. Ready for backend testing to validate IRPS and INSS calculations accuracy."
-\ No newline at end of file
-+    message: "Completed initial implementation of Mozambique salary calculator with tax logic and mobile UI. Ready for backend testing to validate IRPS and INSS calculations accuracy."
-+  - agent: "testing"
-+    message: "✅ BACKEND TESTING COMPLETE: All 4 high-priority backend tasks verified and working correctly. IRPS progressive tax brackets (0%-32%) accurate, INSS calculations (3%/4%) correct, API endpoints functional, both calculation directions working. MongoDB integration confirmed. 93.8% test success rate (15/16 tests passed). Minor: Error handling returns 500 instead of 400 for invalid calculation types, but functionally correct. Backend ready for production."
-\ No newline at end of file
+ def calculate_inss(monthly_salary: float) -> tuple:
+     """Calculate INSS contributions for employee and employer"""
+diff --git a/model.patch b/model.patch
+index 6cec552..7a8af9e 100644
+--- a/model.patch
++++ b/model.patch
+@@ -1,100 +0,0 @@
+-diff --git a/test_result.md b/test_result.md
+-index 37b2141..0cf311b 100644
+---- a/test_result.md
+-+++ b/test_result.md
+-@@ -107,51 +107,63 @@ user_problem_statement: "Create an android app that may calculate Net Salary ou
+- backend:
+-   - task: "Implement IRPS tax calculation with progressive brackets (10%-32%)"
+-     implemented: true
+--    working: "unknown"
+-+    working: true
+-     file: "server.py"
+-     stuck_count: 0
+-     priority: "high"
+--    needs_retesting: true
+-+    needs_retesting: false
+-     status_history:
+-       - working: "unknown"
+-         agent: "main"
+-         comment: "Implemented progressive tax calculation with brackets based on 2025 Mozambique tax rates. Need to test calculations."
+-+      - working: true
+-+        agent: "testing"
+-+        comment: "✅ VERIFIED: IRPS tax calculation working correctly. Tested all 6 brackets (0%, 10%, 15%, 20%, 25%, 32%). Progressive taxation applied accurately across salary ranges from 15K to 300K MTn. Tax-free threshold at 18,750 MTn confirmed."
+- 
+-   - task: "Implement INSS calculation (3% employee + 4% employer)"
+-     implemented: true
+--    working: "unknown"
+-+    working: true
+-     file: "server.py"
+-     stuck_count: 0
+-     priority: "high"
+--    needs_retesting: true
+-+    needs_retesting: false
+-     status_history:
+-       - working: "unknown"
+-         agent: "main"
+-         comment: "Implemented INSS calculation with official rates. Need to test calculations."
+-+      - working: true
+-+        agent: "testing"
+-+        comment: "✅ VERIFIED: INSS calculation working correctly. Employee contribution: 3%, Employer contribution: 4%. Tested across multiple salary ranges and calculations are accurate."
+- 
+-   - task: "Create salary calculation API endpoints"
+-     implemented: true
+--    working: "unknown"
+-+    working: true
+-     file: "server.py"
+-     stuck_count: 0
+-     priority: "high"
+--    needs_retesting: true
+-+    needs_retesting: false
+-     status_history:
+-       - working: "unknown"
+-         agent: "main"
+-         comment: "Created POST /api/calculate-salary endpoint with gross-to-net and net-to-gross calculations. Need to test API calls."
+-+      - working: true
+-+        agent: "testing"
+-+        comment: "✅ VERIFIED: All API endpoints working. GET /api/ (health check), POST /api/calculate-salary (main calculation), GET /api/calculation-history (data retrieval), GET /api/tax-info (tax brackets info). MongoDB integration confirmed - calculations saved and retrieved successfully."
+- 
+-   - task: "Implement gross-to-net and net-to-gross conversion algorithms"
+-     implemented: true
+--    working: "unknown"
+-+    working: true
+-     file: "server.py"
+-     stuck_count: 0
+-     priority: "high"
+--    needs_retesting: true
+-+    needs_retesting: false
+-     status_history:
+-       - working: "unknown"
+-         agent: "main"
+-         comment: "Implemented both calculation directions with iterative approach for net-to-gross. Need to verify accuracy."
+-+      - working: true
+-+        agent: "testing"
+-+        comment: "✅ VERIFIED: Both calculation directions working accurately. Gross-to-net: Direct calculation with all deductions. Net-to-gross: Iterative approach converges correctly within 100 MTn tolerance. Tested with realistic Mozambican salaries (35K-200K MTn range)."
+- 
+- frontend:
+-   - task: "Create mobile UI with Portuguese interface"
+-@@ -210,14 +222,16 @@ metadata:
+- 
+- test_plan:
+-   current_focus:
+--    - "Implement IRPS tax calculation with progressive brackets (10%-32%)"
+--    - "Implement INSS calculation (3% employee + 4% employer)"
+--    - "Create salary calculation API endpoints"
+--    - "Implement gross-to-net and net-to-gross conversion algorithms"
+-+    - "Create mobile UI with Portuguese interface"
+-+    - "Implement calculation type selector (gross-to-net / net-to-gross)"
+-+    - "Create input forms for salary and discounts"
+-+    - "Display calculation results with monthly/annual breakdown"
+-   stuck_tasks: []
+-   test_all: false
+-   test_priority: "high_first"
+- 
+- agent_communication:
+-   - agent: "main"
+--    message: "Completed initial implementation of Mozambique salary calculator with tax logic and mobile UI. Ready for backend testing to validate IRPS and INSS calculations accuracy."
+-\ No newline at end of file
+-+    message: "Completed initial implementation of Mozambique salary calculator with tax logic and mobile UI. Ready for backend testing to validate IRPS and INSS calculations accuracy."
+-+  - agent: "testing"
+-+    message: "✅ BACKEND TESTING COMPLETE: All 4 high-priority backend tasks verified and working correctly. IRPS progressive tax brackets (0%-32%) accurate, INSS calculations (3%/4%) correct, API endpoints functional, both calculation directions working. MongoDB integration confirmed. 93.8% test success rate (15/16 tests passed). Minor: Error handling returns 500 instead of 400 for invalid calculation types, but functionally correct. Backend ready for production."
+-\ No newline at end of file
