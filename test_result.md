@@ -101,3 +101,123 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Create an android app that may calculate Net Salary ou Gross Salary based on Mozambique Tax table (IRPS) and INSS. It has to have an option of choosing wether is the gross or Net that we are calculating, should include as fields target salary (wether gross or Net), Discounts ( Medical Aid, Loans, Other), it show IRPS and INSS calculated"
+
+backend:
+  - task: "Implement IRPS tax calculation with progressive brackets (10%-32%)"
+    implemented: true
+    working: "unknown"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "unknown"
+        agent: "main"
+        comment: "Implemented progressive tax calculation with brackets based on 2025 Mozambique tax rates. Need to test calculations."
+
+  - task: "Implement INSS calculation (3% employee + 4% employer)"
+    implemented: true
+    working: "unknown"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "unknown"
+        agent: "main"
+        comment: "Implemented INSS calculation with official rates. Need to test calculations."
+
+  - task: "Create salary calculation API endpoints"
+    implemented: true
+    working: "unknown"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "unknown"
+        agent: "main"
+        comment: "Created POST /api/calculate-salary endpoint with gross-to-net and net-to-gross calculations. Need to test API calls."
+
+  - task: "Implement gross-to-net and net-to-gross conversion algorithms"
+    implemented: true
+    working: "unknown"
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "unknown"
+        agent: "main"
+        comment: "Implemented both calculation directions with iterative approach for net-to-gross. Need to verify accuracy."
+
+frontend:
+  - task: "Create mobile UI with Portuguese interface"
+    implemented: true
+    working: "unknown"
+    file: "index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "unknown"
+        agent: "main"
+        comment: "Built complete mobile interface in Portuguese with React Native components. Need to test UI functionality."
+
+  - task: "Implement calculation type selector (gross-to-net / net-to-gross)"
+    implemented: true
+    working: "unknown"
+    file: "index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "unknown"
+        agent: "main"
+        comment: "Created toggle buttons for calculation type selection. Need to test state management."
+
+  - task: "Create input forms for salary and discounts"
+    implemented: true
+    working: "unknown"
+    file: "index.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "unknown"
+        agent: "main"
+        comment: "Built input forms for salary, medical aid, loans, and other discounts. Need to test validation."
+
+  - task: "Display calculation results with monthly/annual breakdown"
+    implemented: true
+    working: "unknown"
+    file: "index.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "unknown"
+        agent: "main"
+        comment: "Created results display with toggle between monthly and annual views. Need to test data formatting."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Implement IRPS tax calculation with progressive brackets (10%-32%)"
+    - "Implement INSS calculation (3% employee + 4% employer)"
+    - "Create salary calculation API endpoints"
+    - "Implement gross-to-net and net-to-gross conversion algorithms"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Completed initial implementation of Mozambique salary calculator with tax logic and mobile UI. Ready for backend testing to validate IRPS and INSS calculations accuracy."
