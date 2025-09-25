@@ -435,6 +435,25 @@ export default function SalaryCalculator() {
               {formatCurrency(currentBreakdown.salario_liquido)}
             </Text>
           </View>
+          {result.dependents > 0 && (
+            <View style={styles.dependentsInfo}>
+              <Text style={styles.dependentsTitle}>Informações dos Dependentes</Text>
+              <View style={styles.summaryRow}>
+                <Text style={styles.dependentsLabel}>Número de Dependentes:</Text>
+                <Text style={styles.dependentsValue}>{result.dependents}</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.dependentsLabel}>Dedução Total:</Text>
+                <Text style={styles.dependentsValue}>
+                  {formatCurrency(result.dependents_deduction)}
+                </Text>
+              </View>
+            </View>
+          )}
+          <TouchableOpacity style={styles.pdfButton} onPress={downloadPDF}>
+            <MaterialIcons name="picture-as-pdf" size={20} color="#fff" />
+            <Text style={styles.pdfButtonText}>Baixar PDF</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.detailsCard}>
