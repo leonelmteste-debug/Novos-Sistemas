@@ -29,6 +29,8 @@ interface CalculationResult {
   loans: number;
   other_discounts: number;
   total_discounts: number;
+  dependents: number;
+  dependents_deduction: number;
   monthly_breakdown: {[key: string]: number};
   annual_breakdown: {[key: string]: number};
   calculation_type: string;
