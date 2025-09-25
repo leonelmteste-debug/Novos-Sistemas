@@ -66,6 +66,7 @@ export default function SalaryCalculator() {
           medical_aid: parseFloat(medicalAid) || 0,
           loans: parseFloat(loans) || 0,
           other_discounts: parseFloat(otherDiscounts) || 0,
+          dependents: parseInt(dependents) || 0,
         }),
       });
 
