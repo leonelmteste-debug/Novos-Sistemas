@@ -81,23 +81,29 @@ INSS_EMPLOYER_RATE = 0.04  # 4%
 # Dependents deduction (based on research - approximately 5,000 MTn per dependent per month)
 DEPENDENTS_DEDUCTION_PER_MONTH = 5000  # MTn per dependent per month
 
-def calculate_irps_tax(monthly_salary: float) -> float:
-    """Calculate IRPS tax based on progressive brackets"""
+def calculate_irps_tax(monthly_salary: float, dependents: int = 0) -> tuple:
+    """Calculate IRPS tax based on progressive brackets with dependents deduction"""
+    # Calculate dependents deduction
+    dependents_deduction = dependents * DEPENDENTS_DEDUCTION_PER_MONTH
+    
+    # Apply deduction to salary (taxable income)
+    taxable_salary = max(0, monthly_salary - dependents_deduction)
+    
     tax = 0.0
     
     for bracket in IRPS_BRACKETS:
         if bracket.max_amount is None:
             # Highest bracket
-            if monthly_salary > bracket.min_amount:
-                taxable_amount = monthly_salary - bracket.min_amount
+            if taxable_salary > bracket.min_amount:
+                taxable_amount = taxable_salary - bracket.min_amount
                 tax += taxable_amount * bracket.rate
         else:
             # Regular bracket
-            if monthly_salary > bracket.min_amount:
-                taxable_amount = min(monthly_salary, bracket.max_amount) - bracket.min_amount
+            if taxable_salary > bracket.min_amount:
+                taxable_amount = min(taxable_salary, bracket.max_amount) - bracket.min_amount
                 tax += taxable_amount * bracket.rate
     
-    return tax
+    return tax, dependents_deduction
 
 def calculate_inss(monthly_salary: float) -> tuple:
     """Calculate INSS contributions for employee and employer"""
