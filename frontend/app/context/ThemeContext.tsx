@@ -61,7 +61,7 @@ export const ThemeContext = createContext<ThemeContextType>({
   toggleTheme: () => {},
 });
 
-export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [isDark, setIsDark] = useState(false);
 
   const toggleTheme = async () => {
@@ -70,7 +70,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     await AsyncStorage.setItem('theme', newTheme ? 'dark' : 'light');
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const loadTheme = async () => {
       try {
         const savedTheme = await AsyncStorage.getItem('theme');
@@ -91,7 +91,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       {children}
     </ThemeContext.Provider>
   );
-};
+}
 
 export const useTheme = () => {
   const context = useContext(ThemeContext);
