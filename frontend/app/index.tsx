@@ -463,11 +463,108 @@ export default function SalaryCalculator() {
               </View>
             </View>
           )}
+          <TouchableOpacity 
+            style={styles.detailsToggleButton} 
+            onPress={() => setShowCalculationDetails(!showCalculationDetails)}
+          >
+            <MaterialIcons 
+              name={showCalculationDetails ? "visibility-off" : "visibility"} 
+              size={20} 
+              color="#666" 
+            />
+            <Text style={styles.detailsToggleText}>
+              {showCalculationDetails ? 'Ocultar Detalhes' : 'Ver Detalhes do Cálculo'}
+            </Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.pdfButton} onPress={downloadPDF}>
             <MaterialIcons name="picture-as-pdf" size={20} color="#fff" />
             <Text style={styles.pdfButtonText}>Baixar PDF</Text>
           </TouchableOpacity>
         </View>
+
+        {showCalculationDetails && result.irps_calculation_details && (
+          <View style={styles.calculationDetailsCard}>
+            <Text style={styles.calculationDetailsTitle}>Detalhes do Cálculo IRPS e INSS</Text>
+            
+            {/* IRPS Calculation Table */}
+            <View style={styles.calculationTable}>
+              <Text style={styles.tableTitle}>📊 Fórmula IRPS Aplicada</Text>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableLabel}>Salário Bruto:</Text>
+                <Text style={styles.tableValue}>{formatCurrency(result.irps_calculation_details.salary)}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableLabel}>Dependentes:</Text>
+                <Text style={styles.tableValue}>{result.irps_calculation_details.dependents}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableLabel}>Limite Inferior da Faixa:</Text>
+                <Text style={styles.tableValue}>{formatCurrency(result.irps_calculation_details.lower_limit)}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableLabel}>Coeficiente da Faixa:</Text>
+                <Text style={styles.tableValue}>{(result.irps_calculation_details.coefficient * 100).toFixed(1)}%</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableLabel}>Valor Base (por dependentes):</Text>
+                <Text style={styles.tableValue}>{formatCurrency(result.irps_calculation_details.base_value)}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableLabel}>Valor Adicional:</Text>
+                <Text style={styles.tableValue}>
+                  ({formatCurrency(result.irps_calculation_details.salary)} - {formatCurrency(result.irps_calculation_details.lower_limit)}) × {(result.irps_calculation_details.coefficient * 100).toFixed(1)}% = {formatCurrency(result.irps_calculation_details.additional_amount)}
+                </Text>
+              </View>
+              <View style={[styles.tableRow, styles.formulaRow]}>
+                <Text style={styles.tableLabel}>Fórmula Final:</Text>
+                <Text style={styles.formulaText}>{result.irps_calculation_details.formula}</Text>
+              </View>
+              <View style={[styles.tableRow, styles.totalCalculationRow]}>
+                <Text style={styles.totalCalculationLabel}>IRPS Total:</Text>
+                <Text style={styles.totalCalculationValue}>{formatCurrency(result.irps_tax)}</Text>
+              </View>
+            </View>
+
+            {/* INSS Calculation Table */}
+            <View style={styles.calculationTable}>
+              <Text style={styles.tableTitle}>🛡️ Cálculo INSS</Text>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableLabel}>Base de Cálculo:</Text>
+                <Text style={styles.tableValue}>{formatCurrency(result.gross_salary)}</Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableLabel}>INSS Empregado (3%):</Text>
+                <Text style={styles.tableValue}>
+                  {formatCurrency(result.gross_salary)} × 3% = {formatCurrency(result.inss_employee)}
+                </Text>
+              </View>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableLabel}>INSS Empregador (4%):</Text>
+                <Text style={styles.tableValue}>
+                  {formatCurrency(result.gross_salary)} × 4% = {formatCurrency(result.inss_employer)}
+                </Text>
+              </View>
+              <View style={[styles.tableRow, styles.totalCalculationRow]}>
+                <Text style={styles.totalCalculationLabel}>INSS Total:</Text>
+                <Text style={styles.totalCalculationValue}>
+                  {formatCurrency(result.inss_employee + result.inss_employer)}
+                </Text>
+              </View>
+            </View>
+
+            {/* Summary Formula */}
+            <View style={styles.summaryFormula}>
+              <Text style={styles.summaryTitle}>💡 Fórmula Final do Salário Líquido</Text>
+              <Text style={styles.summaryFormulaText}>
+                Salário Líquido = Salário Bruto - IRPS - INSS (Empregado) - Descontos
+              </Text>
+              <Text style={styles.summaryFormulaCalculation}>
+                {formatCurrency(result.net_salary)} = {formatCurrency(result.gross_salary)} - {formatCurrency(result.irps_tax)} - {formatCurrency(result.inss_employee)} - {formatCurrency(result.medical_aid + result.loans + result.other_discounts)}
+              </Text>
+            </View>
+          </View>
+        )}
 
         <View style={styles.detailsCard}>
           <Text style={styles.detailsTitle}>Detalhamento dos Descontos</Text>
