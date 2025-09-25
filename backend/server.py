@@ -36,6 +36,7 @@ class CalculationInput(BaseModel):
     medical_aid: float = 0
     loans: float = 0
     other_discounts: float = 0
+    dependents: int = 0
 
 class CalculationResult(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
