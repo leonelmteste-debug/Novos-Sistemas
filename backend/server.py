@@ -56,15 +56,19 @@ class CalculationResult(BaseModel):
 class CalculationHistory(BaseModel):
     calculations: List[CalculationResult]
 
-# IRPS tax brackets for 2025 (approximate based on research)
-# Starting from 225,000 MTn annually (18,750 MTn monthly)
+# IRPS tax brackets for 2025 (based on official matrix provided)
+# Values are monthly amounts in MTn
 IRPS_BRACKETS = [
-    TaxBracket(min_amount=0, max_amount=18750, rate=0.0),  # Exempt up to 18,750 MTn/month
-    TaxBracket(min_amount=18750, max_amount=31250, rate=0.10),  # 10% from 18,750 to 31,250
-    TaxBracket(min_amount=31250, max_amount=62500, rate=0.15),  # 15% from 31,250 to 62,500
-    TaxBracket(min_amount=62500, max_amount=125000, rate=0.20), # 20% from 62,500 to 125,000
-    TaxBracket(min_amount=125000, max_amount=250000, rate=0.25), # 25% from 125,000 to 250,000
-    TaxBracket(min_amount=250000, max_amount=None, rate=0.32),   # 32% above 250,000
+    TaxBracket(min_amount=0, max_amount=20249.99, rate=0.0),        # 0% até 20,249.99 MTn
+    TaxBracket(min_amount=20250, max_amount=20749.99, rate=0.0),    # 0% de 20,250 a 20,749.99 MTn
+    TaxBracket(min_amount=20750, max_amount=20999.99, rate=0.10),   # 10% de 20,750 a 20,999.99 MTn
+    TaxBracket(min_amount=21000, max_amount=21249.99, rate=0.10),   # 10% de 21,000 a 21,249.99 MTn
+    TaxBracket(min_amount=21250, max_amount=21749.99, rate=0.10),   # 10% de 21,250 a 21,749.99 MTn
+    TaxBracket(min_amount=21750, max_amount=22249.99, rate=0.10),   # 10% de 21,750 a 22,249.99 MTn
+    TaxBracket(min_amount=22250, max_amount=32749.99, rate=0.15),   # 15% de 22,250 a 32,749.99 MTn
+    TaxBracket(min_amount=32750, max_amount=60749.99, rate=0.20),   # 20% de 32,750 a 60,749.99 MTn
+    TaxBracket(min_amount=60750, max_amount=144749.99, rate=0.25),  # 25% de 60,750 a 144,749.99 MTn
+    TaxBracket(min_amount=144750, max_amount=None, rate=0.32),      # 32% acima de 144,750 MTn
 ]
 
 # INSS rates
