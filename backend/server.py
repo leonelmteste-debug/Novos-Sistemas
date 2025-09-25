@@ -215,12 +215,16 @@ async def get_calculation_history(limit: int = 10):
 async def get_tax_info():
     return {
         "irps_brackets": [
-            {"faixa": "0 - 18,750 MTn", "taxa": "0%", "descricao": "Isento"},
-            {"faixa": "18,751 - 31,250 MTn", "taxa": "10%", "descricao": "Primeira faixa"},
-            {"faixa": "31,251 - 62,500 MTn", "taxa": "15%", "descricao": "Segunda faixa"},
-            {"faixa": "62,501 - 125,000 MTn", "taxa": "20%", "descricao": "Terceira faixa"},
-            {"faixa": "125,001 - 250,000 MTn", "taxa": "25%", "descricao": "Quarta faixa"},
-            {"faixa": "Acima de 250,000 MTn", "taxa": "32%", "descricao": "Quinta faixa"}
+            {"faixa": "0 - 20,249.99 MTn", "taxa": "0%", "descricao": "Isento - Primeira faixa"},
+            {"faixa": "20,250 - 20,749.99 MTn", "taxa": "0%", "descricao": "Isento - Segunda faixa"},
+            {"faixa": "20,750 - 20,999.99 MTn", "taxa": "10%", "descricao": "Primeira faixa tributável"},
+            {"faixa": "21,000 - 21,249.99 MTn", "taxa": "10%", "descricao": "Segunda faixa 10%"},
+            {"faixa": "21,250 - 21,749.99 MTn", "taxa": "10%", "descricao": "Terceira faixa 10%"},
+            {"faixa": "21,750 - 22,249.99 MTn", "taxa": "10%", "descricao": "Quarta faixa 10%"},
+            {"faixa": "22,250 - 32,749.99 MTn", "taxa": "15%", "descricao": "Faixa de 15%"},
+            {"faixa": "32,750 - 60,749.99 MTn", "taxa": "20%", "descricao": "Faixa de 20%"},
+            {"faixa": "60,750 - 144,749.99 MTn", "taxa": "25%", "descricao": "Faixa de 25%"},
+            {"faixa": "Acima de 144,750 MTn", "taxa": "32%", "descricao": "Faixa máxima de 32%"}
         ],
         "inss": {
             "empregado": "3%",
@@ -228,7 +232,8 @@ async def get_tax_info():
             "total": "7%"
         },
         "moeda": "Metical Moçambicano (MTn)",
-        "ano": "2025"
+        "ano": "2025",
+        "fonte": "Matriz Oficial IRPS - Governo de Moçambique"
     }
 
 # Include the router in the main app
