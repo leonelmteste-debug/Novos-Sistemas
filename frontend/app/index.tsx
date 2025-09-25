@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 
+import { ThemeProvider } from './context/ThemeContext';
 import CalculatorScreen from './screens/Calculator';
 import HistoryScreen from './screens/History';
 import ComparatorScreen from './screens/Comparator';
