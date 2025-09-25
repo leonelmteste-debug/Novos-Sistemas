@@ -365,7 +365,7 @@ export default function SalaryCalculator() {
           placeholderTextColor="#999"
         />
         <Text style={styles.inputHelperText}>
-          Dedução de 5.000 MTn por dependente (cônjuge, filhos menores, etc.)
+          Dedução de 200 MTn por dependente (cônjuge, filhos menores, etc.)
         </Text>
       </View>
 
