@@ -155,9 +155,12 @@ def calculate_inss(monthly_salary: float) -> tuple:
     return employee_contribution, employer_contribution
 
 def calculate_net_from_gross(gross_salary: float, medical_aid: float = 0, loans: float = 0, other_discounts: float = 0, dependents: int = 0) -> dict:
-    """Calculate net salary from gross salary"""
-    irps_tax, dependents_deduction = calculate_irps_tax(gross_salary, dependents)
+    """Calculate net salary from gross salary using official IRPS formula"""
+    irps_result = calculate_irps_tax(gross_salary, dependents)
     inss_employee, inss_employer = calculate_inss(gross_salary)
+    
+    irps_tax = irps_result["irps_amount"]
+    dependents_deduction = irps_result["dependents_deduction"]
     
     total_deductions = irps_tax + inss_employee + medical_aid + loans + other_discounts
     net_salary = gross_salary - total_deductions
@@ -173,7 +176,8 @@ def calculate_net_from_gross(gross_salary: float, medical_aid: float = 0, loans:
         "other_discounts": other_discounts,
         "total_discounts": total_deductions,
         "dependents": dependents,
-        "dependents_deduction": dependents_deduction
+        "dependents_deduction": dependents_deduction,
+        "irps_calculation_details": irps_result["calculation_details"]
     }
 
 def calculate_gross_from_net(net_salary: float, medical_aid: float = 0, loans: float = 0, other_discounts: float = 0, dependents: int = 0) -> dict:
