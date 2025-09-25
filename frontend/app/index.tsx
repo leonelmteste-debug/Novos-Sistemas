@@ -16,7 +16,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 
-const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
+// Use a URL fixa para produção quando não há variável de ambiente
+const EXPO_PUBLIC_BACKEND_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://calculadora-salarial-mz.herokuapp.com';
 
 interface CalculationResult {
   id: string;
