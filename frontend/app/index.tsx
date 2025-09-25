@@ -34,6 +34,18 @@ interface CalculationResult {
   monthly_breakdown: {[key: string]: number};
   annual_breakdown: {[key: string]: number};
   calculation_type: string;
+  irps_calculation_details: {
+    salary: number;
+    dependents: number;
+    bracket_found: boolean;
+    lower_limit: number;
+    coefficient: number;
+    base_value: number;
+    additional_amount: number;
+    base_value_0_dep?: number;
+    irps_0_dependents?: number;
+    formula: string;
+  };
 }
 
 export default function SalaryCalculator() {
