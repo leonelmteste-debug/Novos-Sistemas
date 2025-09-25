@@ -54,6 +54,7 @@ class CalculationResult(BaseModel):
     monthly_breakdown: dict
     annual_breakdown: dict
     calculation_type: str
+    irps_calculation_details: dict
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
 class CalculationHistory(BaseModel):
