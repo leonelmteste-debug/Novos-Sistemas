@@ -107,51 +107,63 @@ user_problem_statement: "Create an android app that may calculate Net Salary ou 
 backend:
   - task: "Implement IRPS tax calculation with progressive brackets (10%-32%)"
     implemented: true
-    working: "unknown"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "unknown"
         agent: "main"
         comment: "Implemented progressive tax calculation with brackets based on 2025 Mozambique tax rates. Need to test calculations."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: IRPS tax calculation working correctly. Tested all 6 brackets (0%, 10%, 15%, 20%, 25%, 32%). Progressive taxation applied accurately across salary ranges from 15K to 300K MTn. Tax-free threshold at 18,750 MTn confirmed."
 
   - task: "Implement INSS calculation (3% employee + 4% employer)"
     implemented: true
-    working: "unknown"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "unknown"
         agent: "main"
         comment: "Implemented INSS calculation with official rates. Need to test calculations."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: INSS calculation working correctly. Employee contribution: 3%, Employer contribution: 4%. Tested across multiple salary ranges and calculations are accurate."
 
   - task: "Create salary calculation API endpoints"
     implemented: true
-    working: "unknown"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "unknown"
         agent: "main"
         comment: "Created POST /api/calculate-salary endpoint with gross-to-net and net-to-gross calculations. Need to test API calls."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: All API endpoints working. GET /api/ (health check), POST /api/calculate-salary (main calculation), GET /api/calculation-history (data retrieval), GET /api/tax-info (tax brackets info). MongoDB integration confirmed - calculations saved and retrieved successfully."
 
   - task: "Implement gross-to-net and net-to-gross conversion algorithms"
     implemented: true
-    working: "unknown"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "unknown"
         agent: "main"
         comment: "Implemented both calculation directions with iterative approach for net-to-gross. Need to verify accuracy."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Both calculation directions working accurately. Gross-to-net: Direct calculation with all deductions. Net-to-gross: Iterative approach converges correctly within 100 MTn tolerance. Tested with realistic Mozambican salaries (35K-200K MTn range)."
 
 frontend:
   - task: "Create mobile UI with Portuguese interface"
