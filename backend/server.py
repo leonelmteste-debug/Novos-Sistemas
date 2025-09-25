@@ -78,29 +78,75 @@ IRPS_TAX_TABLE = [
 INSS_EMPLOYEE_RATE = 0.03  # 3%
 INSS_EMPLOYER_RATE = 0.04  # 4%
 
-def calculate_irps_tax(monthly_salary: float, dependents: int = 0) -> tuple:
-    """Calculate IRPS tax based on official matrix from Moçambique Tax Authority"""
+def calculate_irps_tax(monthly_salary: float, dependents: int = 0) -> dict:
+    """
+    Calculate IRPS tax using the official formula from Moçambique Tax Authority:
+    IRPS = Valor_base_por_dependentes + (Salário_Bruto - Limite_Inferior_Intervalo) * Coeficiente
+    """
     # Cap dependents at 4 (matrix only goes up to 4 dependents)
     dependents_capped = min(dependents, 4)
     
-    # Find the appropriate salary bracket
-    irps_amount = 0
-    for (min_sal, max_sal), dependent_rates in IRPS_MATRIX.items():
-        if min_sal <= monthly_salary <= max_sal:
-            irps_amount = dependent_rates[dependents_capped]
-            break
+    # Find the appropriate tax bracket
+    selected_bracket = None
+    for i, bracket in enumerate(IRPS_TAX_TABLE):
+        lower_limit, coefficient, base_values = bracket
+        
+        # Check if salary falls in this bracket
+        if i == len(IRPS_TAX_TABLE) - 1:  # Last bracket (no upper limit)
+            if monthly_salary >= lower_limit:
+                selected_bracket = bracket
+                break
+        else:
+            next_lower_limit = IRPS_TAX_TABLE[i + 1][0]
+            if lower_limit <= monthly_salary < next_lower_limit:
+                selected_bracket = bracket
+                break
     
-    # Calculate the effective dependents deduction (for informational purposes)
-    # This is the difference between 0 dependents and actual dependents
-    base_irps = 0
-    for (min_sal, max_sal), dependent_rates in IRPS_MATRIX.items():
-        if min_sal <= monthly_salary <= max_sal:
-            base_irps = dependent_rates[0]
-            break
+    if not selected_bracket:
+        # Salary below minimum taxable amount
+        return {
+            "irps_amount": 0,
+            "dependents_deduction": 0,
+            "calculation_details": {
+                "salary": monthly_salary,
+                "dependents": dependents_capped,
+                "bracket_found": False,
+                "lower_limit": 0,
+                "coefficient": 0,
+                "base_value": 0,
+                "additional_amount": 0,
+                "formula": "Salary below minimum taxable threshold"
+            }
+        }
     
-    dependents_deduction = base_irps - irps_amount
+    lower_limit, coefficient, base_values = selected_bracket
+    base_value = base_values[dependents_capped]
     
-    return irps_amount, dependents_deduction
+    # Apply the official formula
+    additional_amount = (monthly_salary - lower_limit) * coefficient
+    irps_amount = base_value + additional_amount
+    
+    # Calculate what the IRPS would be with 0 dependents for comparison
+    base_value_0_dep = base_values[0]
+    irps_amount_0_dep = base_value_0_dep + additional_amount
+    dependents_deduction = irps_amount_0_dep - irps_amount
+    
+    return {
+        "irps_amount": irps_amount,
+        "dependents_deduction": dependents_deduction,
+        "calculation_details": {
+            "salary": monthly_salary,
+            "dependents": dependents_capped,
+            "bracket_found": True,
+            "lower_limit": lower_limit,
+            "coefficient": coefficient,
+            "base_value": base_value,
+            "additional_amount": additional_amount,
+            "base_value_0_dep": base_value_0_dep,
+            "irps_0_dependents": irps_amount_0_dep,
+            "formula": f"{base_value} + ({monthly_salary} - {lower_limit}) * {coefficient} = {irps_amount}"
+        }
+    }
 
 def calculate_inss(monthly_salary: float) -> tuple:
     """Calculate INSS contributions for employee and employer"""
